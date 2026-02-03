@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Will You Be My Valentine?</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* CSS Variables */
+    :root {
+      --primary-color: #FF6B9D;
+      --secondary-color: #FFC1CC;
+      --accent-color: #FF1493;
+      --light-pink: #FFB6C1;
+      --text-color: #333;
+      --white: #ffffff;
+      --shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      --transition: all 0.3s ease-out;
+    }
+
+    /* Accessibility - Reduce motion */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #FFE5EC 0%, #FFB6D9 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Question Container */
+    #question-container {
+      text-align: center;
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    #question-container h1 {
+      font-size: 2.5rem;
+      color: var(--text-color);
+      margin-bottom: 40px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    button {
+      padding: 15px 40px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+      min-height: 50px;
+      min-width: 120px;
+    }
+
+    #yes-btn {
+      background-color: var(--primary-color);
+      color: var(--white);
+    }
+
+    #yes-btn:hover {
+      background-color: var(--accent-color);
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(255, 107, 157, 0.4);
+    }
+
+    #yes-btn:active {
+      transform: scale(0.98);
+    }
+
+    #no-btn {
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      position: relative;
+    }
+
+    #no-btn:hover {
+      background-color: var(--light-pink);
+    }
+
+    /* Success Container */
+    #success-container {
+      text-align: center;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    #success-container h1 {
+      font-size: 2.5rem;
+      color: var(--text-color);
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    .gifs-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .gifs-container img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.8s ease-in 0.3s both;
+    }
+
+    .gifs-container img:nth-child(2) {
+      animation-delay: 0.6s;
+    }
+
+    /* Desktop/Tablet Breakpoint */
+    @media (min-width: 768px) {
+      #question-container h1,
+      #success-container h1 {
+        font-size: 3rem;
+      }
+
+      .button-container {
+        gap: 30px;
+      }
+
+      button {
+        padding: 18px 50px;
+        font-size: 1.2rem;
+      }
+
+      .gifs-container {
+        flex-direction: row;
+        gap: 30px;
+      }
+
+      .gifs-container img {
+        max-width: 45%;
+        flex: 1;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Utility class for hiding */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Loading indicator (optional) */
+    .loading {
+      color: var(--primary-color);
+      font-size: 0.9rem;
+      margin-top: 20px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 0.6;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Question Container -->
+  <div id="question-container">
+    <h1>Will you be my valentine?</h1>
+    <div class="button-container">
+      <button id="yes-btn">Yes</button>
+      <button id="no-btn">No</button>
+    </div>
+  </div>
+
+  <!-- Success Container -->
+  <div id="success-container" class="hidden">
+    <h1>Let's goooooooo 🎉</h1>
+    <div class="gifs-container">
+      <img src="1.gif" alt="Celebration GIF 1" loading="lazy">
+      <img src="2.gif" alt="Celebration GIF 2" loading="lazy">
+    </div>
+  </div>
+
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <script>
+    // ============ Configuration ============
+    const CONFIG = {
+      confetti: {
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#FF6B9D', '#FFC1CC', '#FF1493', '#FFB6C1']
+      },
+      buttonPadding: 20 // Minimum distance from viewport edges
+    };
+
+    // ============ DOM Elements ============
+    const yesBtn = document.getElementById('yes-btn');
+    const noBtn = document.getElementById('no-btn');
+    const questionContainer = document.getElementById('question-container');
+    const successContainer = document.getElementById('success-container');
+
+    // ============ Button Movement Logic ============
+    function moveNoButton() {
+      // Calculate maximum positions to keep button within viewport
+      const maxX = window.innerWidth - noBtn.offsetWidth - (CONFIG.buttonPadding * 2);
+      const maxY = window.innerHeight - noBtn.offsetHeight - (CONFIG.buttonPadding * 2);
+
+      // Generate random positions within safe boundaries
+      const randomX = Math.max(CONFIG.buttonPadding, Math.random() * maxX);
+      const randomY = Math.max(CONFIG.buttonPadding, Math.random() * maxY);
+
+      // Apply fixed positioning to move button around the viewport
+      noBtn.style.position = 'fixed';
+      noBtn.style.left = randomX + 'px';
+      noBtn.style.top = randomY + 'px';
+    }
+
+    // ============ Event Handlers ============
+    function handleNoHover() {
+      // Desktop: Move on mouseenter
+      moveNoButton();
+    }
+
+    function handleNoTouch(e) {
+      // Mobile: Move on touchstart and prevent default behavior
+      e.preventDefault();
+      moveNoButton();
+    }
+
+    function triggerConfetti() {
+      // Create multiple confetti bursts for a more dramatic effect
+      const burstCount = 3;
+      const burstDelay = 250; // milliseconds between bursts
+
+      for (let i = 0; i < burstCount; i++) {
+        setTimeout(() => {
+          confetti({
+            particleCount: CONFIG.confetti.particleCount,
+            spread: CONFIG.confetti.spread,
+            origin: CONFIG.confetti.origin,
+            colors: CONFIG.confetti.colors
+          });
+        }, i * burstDelay);
+      }
+    }
+
+    function showSuccessState() {
+      // Hide question container
+      questionContainer.classList.add('hidden');
+
+      // Show success container
+      successContainer.classList.remove('hidden');
+
+      // Trigger confetti celebration
+      triggerConfetti();
+    }
+
+    function handleYesClick() {
+      showSuccessState();
+    }
+
+    // ============ Event Listeners Initialization ============
+    function initializeEventListeners() {
+      // Yes button: single click handler (works for both mouse and touch)
+      yesBtn.addEventListener('click', handleYesClick);
+
+      // No button: desktop and mobile handlers
+      noBtn.addEventListener('mouseenter', handleNoHover);
+      noBtn.addEventListener('touchstart', handleNoTouch, { passive: false });
+    }
+
+    // ============ DOM Ready ============
+    document.addEventListener('DOMContentLoaded', initializeEventListeners);
+
+    // Optional: Handle window resize to recalculate button boundaries
+    window.addEventListener('resize', () => {
+      // This ensures button stays in bounds even if user resizes window
+      // Only move if button is already positioned outside new boundaries
+      if (noBtn.style.position === 'fixed') {
+        const maxX = window.innerWidth - noBtn.offsetWidth - (CONFIG.buttonPadding * 2);
+        const maxY = window.innerHeight - noBtn.offsetHeight - (CONFIG.buttonPadding * 2);
+
+        const currentX = parseInt(noBtn.style.left);
+        const currentY = parseInt(noBtn.style.top);
+
+        if (currentX > maxX || currentY > maxY) {
+          moveNoButton();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
